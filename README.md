@@ -6,6 +6,10 @@
 
 ## How can I edit this code?
 
+
+Run Server : npm run server
+Run Project : npm run dev
+
 There are several ways of editing your application.
 
 **Use Lovable**

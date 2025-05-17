@@ -18,7 +18,7 @@ const HeroSlider = () => {
   if (!mounted) return null;
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden">
+    <section className="relative w-full overflow-hidden pb-[140px]">
       {/* Background gradients */}
       <div className="absolute inset-0 z-0">
         {isDark ? (

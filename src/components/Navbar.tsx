@@ -29,7 +29,7 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-background shadow-md' : 'bg-transparent'
+        scrolled ? 'bg-background/50 backdrop-blur-md' : 'bg-transparent'
       }`}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -73,15 +73,12 @@ const Navbar = () => {
           <Link to="/" className="hover:text-iceCream-orange transition-colors">
             Home
           </Link>
-          <Link to="/about" className="hover:text-iceCream-orange transition-colors">
-            About
-          </Link>
           <Link to="/shop" className="hover:text-iceCream-orange transition-colors">
             Shop Online
           </Link>
-          <Link to="/contact" className="hover:text-iceCream-orange transition-colors">
+          {/* <Link to="/contact" className="hover:text-iceCream-orange transition-colors">
             Contact
-          </Link>
+          </Link> */}
           <ThemeToggle />
         </nav>
       </div>
@@ -102,13 +99,13 @@ const Navbar = () => {
             >
               Home
             </Link>
-            <Link
+            {/* <Link
               to="/about"
               className="block hover:text-iceCream-orange transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               About
-            </Link>
+            </Link> */}
             <Link
               to="/shop"
               className="block hover:text-iceCream-orange transition-colors"
@@ -116,13 +113,13 @@ const Navbar = () => {
             >
               Shop Online
             </Link>
-            <Link
+            {/* <Link
               to="/contact"
               className="block hover:text-iceCream-orange transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Contact
-            </Link>
+            </Link> */}
             <div className="flex items-center">
               <ThemeToggle />
             </div>

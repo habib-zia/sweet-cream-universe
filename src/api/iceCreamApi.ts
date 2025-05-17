@@ -1,4 +1,3 @@
-
 // Define the ice cream type
 export interface IceCream {
   id: number;
@@ -16,7 +15,7 @@ export interface IceCream {
 }
 
 // API configuration
-const API_URL = "http://localhost:5000/api"; // Change this to your actual API URL when deployed
+const API_URL = "http://localhost:8080/api"; // Using localhost for better compatibility
 
 /**
  * Ice Cream API Service for connecting to the backend
@@ -117,7 +116,7 @@ class IceCreamApi {
   ];
   
   // Flag to determine if we should use mock data or real API
-  private useMockData: boolean = true;
+  private useMockData: boolean = false;
   
   // Get all ice creams
   async getAllIceCreams(): Promise<IceCream[]> {
@@ -131,9 +130,16 @@ class IceCreamApi {
     
     // Real API implementation
     try {
-      const response = await fetch(`${API_URL}/ice-creams`);
+      console.log('Fetching from:', `${API_URL}/ice-creams`);
+      const response = await fetch(`${API_URL}/ice-creams`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
       if (!response.ok) {
-        throw new Error('Failed to fetch ice creams');
+        throw new Error(`Failed to fetch ice creams: ${response.status} ${response.statusText}`);
       }
       return await response.json();
     } catch (error) {
@@ -154,9 +160,16 @@ class IceCreamApi {
     
     // Real API implementation
     try {
-      const response = await fetch(`${API_URL}/ice-creams/popular`);
+      console.log('Fetching from:', `${API_URL}/ice-creams/popular`);
+      const response = await fetch(`${API_URL}/ice-creams/popular`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
       if (!response.ok) {
-        throw new Error('Failed to fetch popular ice creams');
+        throw new Error(`Failed to fetch popular ice creams: ${response.status} ${response.statusText}`);
       }
       return await response.json();
     } catch (error) {
@@ -177,7 +190,13 @@ class IceCreamApi {
     
     // Real API implementation
     try {
-      const response = await fetch(`${API_URL}/ice-creams/${id}`);
+      const response = await fetch(`${API_URL}/ice-creams/${id}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.status === 404) {
         return undefined;
       }

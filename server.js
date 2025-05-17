@@ -1,57 +1,75 @@
-
-/**
- * REFERENCE FILE - This is a sample Express server for your external backend
- * This file is not used in the Lovable project and is provided as a reference
- * for when you set up your external Node.js server
- */
-
-const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+import express from 'express';
+import mysql from 'mysql2';
+import cors from 'cors';
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Middleware
-app.use(cors()); // Enable CORS for all routes
-app.use(bodyParser.json());
+// Configure CORS - more permissive for development
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: true
+}));
+
+// Preflight requests
+app.options('*', cors());
+
+// Parse JSON bodies
+app.use(express.json());
+
+// Logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
+
+// Test route to check if server is running
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API server is running' });
+});
 
 // Database connection
 const db = mysql.createConnection({
   host: 'localhost',
-  user: 'root', // Change to your MySQL username
-  password: '', // Change to your MySQL password
+  user: 'root',
+  password: '',
   database: 'ice_cream_db'
 });
 
+// Connect to database
 db.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
     return;
   }
   console.log('Connected to MySQL database');
+  
+  // Create database table if it doesn't exist
+  db.query(`
+    CREATE TABLE IF NOT EXISTS ice_creams (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      company VARCHAR(100) NOT NULL,
+      type VARCHAR(50),
+      size VARCHAR(50),
+      price DECIMAL(10,2) NOT NULL,
+      flavour VARCHAR(100),
+      color VARCHAR(30),
+      expire_date DATE,
+      images JSON,
+      is_popular BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `, (tableErr) => {
+    if (tableErr) {
+      console.error('Error creating table:', tableErr);
+    } else {
+      console.log('Database table is ready');
+    }
+  });
 });
-
-// Create database table if it doesn't exist
-db.query(`
-  CREATE TABLE IF NOT EXISTS ice_creams (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    company VARCHAR(100) NOT NULL,
-    type VARCHAR(50),
-    size VARCHAR(50),
-    price DECIMAL(10,2) NOT NULL,
-    flavour VARCHAR(100),
-    color VARCHAR(30),
-    expire_date DATE,
-    images JSON,
-    is_popular BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  )
-`);
-
-// Routes
 
 // GET all ice creams
 app.get('/api/ice-creams', (req, res) => {
@@ -61,13 +79,19 @@ app.get('/api/ice-creams', (req, res) => {
       return res.status(500).json({ error: 'Failed to fetch ice creams' });
     }
     
-    // Parse JSON images field
-    const iceCreams = results.map(item => ({
-      ...item,
-      images: JSON.parse(item.images || '[]')
-    }));
-    
-    res.json(iceCreams);
+    try {
+      // Parse JSON images field and convert price to number
+      const iceCreams = results.map(item => ({
+        ...item,
+        price: parseFloat(item.price),
+        images: JSON.parse(item.images || '[]')
+      }));
+      
+      res.json(iceCreams);
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      res.status(500).json({ error: 'Error processing data' });
+    }
   });
 });
 
@@ -79,13 +103,19 @@ app.get('/api/ice-creams/popular', (req, res) => {
       return res.status(500).json({ error: 'Failed to fetch popular ice creams' });
     }
     
-    // Parse JSON images field
-    const iceCreams = results.map(item => ({
-      ...item,
-      images: JSON.parse(item.images || '[]')
-    }));
-    
-    res.json(iceCreams);
+    try {
+      // Parse JSON images field and convert price to number
+      const iceCreams = results.map(item => ({
+        ...item,
+        price: parseFloat(item.price),
+        images: JSON.parse(item.images || '[]')
+      }));
+      
+      res.json(iceCreams);
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      res.status(500).json({ error: 'Error processing data' });
+    }
   });
 });
 
@@ -102,13 +132,19 @@ app.get('/api/ice-creams/:id', (req, res) => {
       return res.status(404).json({ error: 'Ice cream not found' });
     }
     
-    // Parse JSON images field
-    const iceCream = {
-      ...results[0],
-      images: JSON.parse(results[0].images || '[]')
-    };
-    
-    res.json(iceCream);
+    try {
+      // Parse JSON images field and convert price to number
+      const iceCream = {
+        ...results[0],
+        price: parseFloat(results[0].price),
+        images: JSON.parse(results[0].images || '[]')
+      };
+      
+      res.json(iceCream);
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      res.status(500).json({ error: 'Error processing data' });
+    }
   });
 });
 
@@ -134,13 +170,19 @@ app.post('/api/ice-creams', (req, res) => {
         return res.status(500).json({ error: 'Failed to fetch new ice cream' });
       }
       
-      // Parse JSON images field
-      const newIceCream = {
-        ...results[0],
-        images: JSON.parse(results[0].images || '[]')
-      };
-      
-      res.status(201).json(newIceCream);
+      try {
+        // Parse JSON images field and convert price to number
+        const newIceCream = {
+          ...results[0],
+          price: parseFloat(results[0].price),
+          images: JSON.parse(results[0].images || '[]')
+        };
+        
+        res.status(201).json(newIceCream);
+      } catch (parseError) {
+        console.error('Error parsing JSON:', parseError);
+        res.status(500).json({ error: 'Error processing data' });
+      }
     });
   });
 });
@@ -172,13 +214,19 @@ app.put('/api/ice-creams/:id', (req, res) => {
         return res.status(500).json({ error: 'Failed to fetch updated ice cream' });
       }
       
-      // Parse JSON images field
-      const updatedIceCream = {
-        ...results[0],
-        images: JSON.parse(results[0].images || '[]')
-      };
-      
-      res.json(updatedIceCream);
+      try {
+        // Parse JSON images field and convert price to number
+        const updatedIceCream = {
+          ...results[0],
+          price: parseFloat(results[0].price),
+          images: JSON.parse(results[0].images || '[]')
+        };
+        
+        res.json(updatedIceCream);
+      } catch (parseError) {
+        console.error('Error parsing JSON:', parseError);
+        res.status(500).json({ error: 'Error processing data' });
+      }
     });
   });
 });
@@ -205,15 +253,3 @@ app.delete('/api/ice-creams/:id', (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-/**
- * To use this server:
- * 1. Set up a Node.js environment outside of Lovable
- * 2. Create a new folder for your backend
- * 3. Copy this file
- * 4. Run 'npm init -y' to create a package.json
- * 5. Install dependencies: npm install express mysql2 cors body-parser
- * 6. Create a MySQL database named 'ice_cream_db'
- * 7. Run 'node server.js' to start the server
- * 8. Change the API_URL in your Lovable frontend to point to this server
- */

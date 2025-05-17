@@ -4,6 +4,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { IceCreamCone, Award, Check } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import Image from '../../public/image.jpg';
 
 const AboutSection = () => {
   const { theme } = useTheme();
@@ -135,7 +136,7 @@ const AboutSection = () => {
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src="https://images.unsplash.com/photo-1633933032781-a3e73576097e?q=80&w=1887&auto=format&fit=crop"
+                  src={Image}
                   alt="Ice cream production"
                   className="w-full h-full object-cover"
                 />

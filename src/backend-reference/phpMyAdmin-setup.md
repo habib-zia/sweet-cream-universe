@@ -54,7 +54,7 @@ CREATE TABLE `ice_creams` (
 
 ## Step 3: Connect Frontend to Backend
 
-1. In your Lovable project, update the `API_URL` in `src/api/iceCreamApi.ts` to point to your Node.js server (default is http://localhost:5000/api)
+1. In your Lovable project, update the `API_URL` in `src/api/iceCreamApi.ts` to point to your Node.js server (default is http://localhost:8080/api)
 2. Set `useMockData` to `false` to use the real API:
    ```javascript
    iceCreamApi.setUseMockData(false);

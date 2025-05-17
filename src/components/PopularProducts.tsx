@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -50,6 +49,26 @@ const PopularProducts = () => {
     fetchPopularIceCreams();
   }, []);
   
+  // Force re-render on window resize to help with initialization
+  const [windowWidth, setWindowWidth] = useState(0);
+  
+  useEffect(() => {
+    // Set initial window width
+    setWindowWidth(window.innerWidth);
+    
+    // Handle resize events
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -79,6 +98,16 @@ const PopularProducts = () => {
         duration: 2
       }
     }
+  };
+
+  // Adjust carousel options based on viewport
+  const carouselOptions = {
+    align: "start",
+    loop: true,
+    dragFree: true,
+    skipSnaps: true,
+    // Ensure carousel is initialized properly on desktop
+    containScroll: "trimSnaps"
   };
 
   return (
@@ -146,15 +175,13 @@ const PopularProducts = () => {
             animate={controls}
             className="w-full"
           >
-            {popularIceCreams.length > 0 && (
+            {popularIceCreams.length > 0 && windowWidth > 0 && (
               <Carousel
-                opts={{
-                  align: "start",
-                  loop: true,
-                }}
+                opts={carouselOptions}
                 className="w-full"
+                key={`carousel-${windowWidth}`} // Force re-render on width change
               >
-                <CarouselContent>
+                <CarouselContent className="-ml-4">
                   {popularIceCreams.map((iceCream) => (
                     <CarouselItem key={iceCream.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
                       <motion.div 

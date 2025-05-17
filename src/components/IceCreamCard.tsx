@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -55,7 +54,9 @@ const IceCreamCard = ({ iceCream }: IceCreamCardProps) => {
           className="absolute top-4 left-4 bg-gradient-to-r from-iceCream-indigo to-iceCream-purple 
                     text-white font-semibold px-3 py-1 rounded-full shadow-lg"
         >
-          ${iceCream.price.toFixed(2)}
+          ${typeof iceCream.price === 'number' 
+              ? iceCream.price.toFixed(2) 
+              : parseFloat(String(iceCream.price)).toFixed(2)}
         </div>
         
         {iceCream.is_popular && (
