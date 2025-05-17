@@ -21,6 +21,7 @@ export default {
 		extend: {
 			fontFamily: {
 				fira: ['Fira Code', 'monospace'],
+				poppins: ['Poppins', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -66,6 +67,10 @@ export default {
 					purple: '#7D4C92',
 					lime: '#BFDB38',
 					amber: '#FFBB5C',
+					pink: '#FF6AC2',
+					teal: '#20D2C8',
+					rose: '#FF5F7E',
+					mint: '#42E695',
 				}
 			},
 			borderRadius: {
@@ -101,6 +106,22 @@ export default {
 				'bounce-soft': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-5px)' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-1000px 0' },
+					'100%': { backgroundPosition: '1000px 0' }
+				},
+				'rotate-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
+				},
+				'scale-pulse': {
+					'0%, 100%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(1.05)' }
 				}
 			},
 			animation: {
@@ -110,7 +131,18 @@ export default {
 				'slide-in-left': 'slide-in-left 0.5s ease-out',
 				'slide-in-bottom': 'slide-in-bottom 0.5s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
-				'bounce-soft': 'bounce-soft 2s ease-in-out infinite'
+				'bounce-soft': 'bounce-soft 2s ease-in-out infinite',
+				'float': 'float 3s ease-in-out infinite',
+				'shimmer': 'shimmer 2s linear infinite',
+				'rotate-slow': 'rotate-slow 10s linear infinite',
+				'scale-pulse': 'scale-pulse 3s ease-in-out infinite',
+			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+				'gradient-white': 'linear-gradient(to right, #ffffff, #f5f5f5, #ffffff)',
+				'gradient-black': 'linear-gradient(to right, #111111, #333333, #111111)',
+				'shimmer': 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%)',
 			}
 		}
 	},
