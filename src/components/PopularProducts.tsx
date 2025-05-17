@@ -40,9 +40,9 @@ const PopularProducts = () => {
       try {
         const data = await iceCreamApi.getPopularIceCreams();
         setPopularIceCreams(data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching popular ice creams:', error);
-      } finally {
         setLoading(false);
       }
     };
@@ -144,32 +144,35 @@ const PopularProducts = () => {
             variants={containerVariants}
             initial="hidden"
             animate={controls}
+            className="w-full"
           >
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-4">
-                {popularIceCreams.map((iceCream) => (
-                  <CarouselItem key={iceCream.id} className="pl-4 sm:basis-1/2 lg:basis-1/3">
-                    <motion.div 
-                      variants={itemVariants}
-                      whileHover={{ y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <IceCreamCard iceCream={iceCream} />
-                    </motion.div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <div className="flex justify-center gap-4 mt-8">
-                <CarouselPrevious className="relative static left-0 translate-y-0 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-10 w-10 rounded-full" />
-                <CarouselNext className="relative static right-0 translate-y-0 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-10 w-10 rounded-full" />
-              </div>
-            </Carousel>
+            {popularIceCreams.length > 0 && (
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent>
+                  {popularIceCreams.map((iceCream) => (
+                    <CarouselItem key={iceCream.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                      <motion.div 
+                        variants={itemVariants}
+                        whileHover={{ y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <IceCreamCard iceCream={iceCream} />
+                      </motion.div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <div className="flex justify-center gap-4 mt-8">
+                  <CarouselPrevious className="relative static transform-none bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-10 w-10 rounded-full" />
+                  <CarouselNext className="relative static transform-none bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-10 w-10 rounded-full" />
+                </div>
+              </Carousel>
+            )}
           </motion.div>
         )}
       </div>
