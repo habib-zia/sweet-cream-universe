@@ -1,3 +1,4 @@
+
 // Define the ice cream type
 export interface IceCream {
   id: number;
@@ -14,8 +15,13 @@ export interface IceCream {
   updated_at?: string;
 }
 
-// This is a mock API service that simulates backend calls
-// In a real application, these would make actual API calls to your backend
+// API configuration
+const API_URL = "http://localhost:5000/api"; // Change this to your actual API URL when deployed
+
+/**
+ * Ice Cream API Service for connecting to the backend
+ * Currently uses mock data but can be easily switched to a real API
+ */
 class IceCreamApi {
   private mockData: IceCream[] = [
     {
@@ -110,84 +116,200 @@ class IceCreamApi {
     }
   ];
   
+  // Flag to determine if we should use mock data or real API
+  private useMockData: boolean = true;
+  
   // Get all ice creams
   async getAllIceCreams(): Promise<IceCream[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([...this.mockData]);
-      }, 500);
-    });
+    if (this.useMockData) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([...this.mockData]);
+        }, 500);
+      });
+    }
+    
+    // Real API implementation
+    try {
+      const response = await fetch(`${API_URL}/ice-creams`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch ice creams');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching ice creams:', error);
+      throw error;
+    }
   }
   
   // Get popular ice creams
   async getPopularIceCreams(): Promise<IceCream[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(this.mockData.filter(iceCream => iceCream.is_popular));
-      }, 500);
-    });
+    if (this.useMockData) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(this.mockData.filter(iceCream => iceCream.is_popular));
+        }, 500);
+      });
+    }
+    
+    // Real API implementation
+    try {
+      const response = await fetch(`${API_URL}/ice-creams/popular`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch popular ice creams');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching popular ice creams:', error);
+      throw error;
+    }
   }
   
   // Get ice cream by id
   async getIceCreamById(id: number): Promise<IceCream | undefined> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(this.mockData.find(iceCream => iceCream.id === id));
-      }, 500);
-    });
+    if (this.useMockData) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(this.mockData.find(iceCream => iceCream.id === id));
+        }, 500);
+      });
+    }
+    
+    // Real API implementation
+    try {
+      const response = await fetch(`${API_URL}/ice-creams/${id}`);
+      if (response.status === 404) {
+        return undefined;
+      }
+      if (!response.ok) {
+        throw new Error('Failed to fetch ice cream');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Error fetching ice cream with id ${id}:`, error);
+      throw error;
+    }
   }
   
   // Add new ice cream
   async addIceCream(iceCream: Omit<IceCream, 'id'>): Promise<IceCream> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newIceCream: IceCream = {
-          ...iceCream,
-          id: this.mockData.length + 1,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        this.mockData.push(newIceCream);
-        resolve(newIceCream);
-      }, 500);
-    });
+    if (this.useMockData) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const newIceCream: IceCream = {
+            ...iceCream,
+            id: this.mockData.length + 1,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+          this.mockData.push(newIceCream);
+          resolve(newIceCream);
+        }, 500);
+      });
+    }
+    
+    // Real API implementation
+    try {
+      const response = await fetch(`${API_URL}/ice-creams`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(iceCream)
+      });
+      if (!response.ok) {
+        throw new Error('Failed to add ice cream');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error adding ice cream:', error);
+      throw error;
+    }
   }
   
   // Update ice cream
   async updateIceCream(id: number, iceCream: Partial<IceCream>): Promise<IceCream | undefined> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const index = this.mockData.findIndex(item => item.id === id);
-        if (index === -1) {
-          resolve(undefined);
-          return;
-        }
-        
-        this.mockData[index] = {
-          ...this.mockData[index],
-          ...iceCream,
-          updated_at: new Date().toISOString()
-        };
-        
-        resolve(this.mockData[index]);
-      }, 500);
-    });
+    if (this.useMockData) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const index = this.mockData.findIndex(item => item.id === id);
+          if (index === -1) {
+            resolve(undefined);
+            return;
+          }
+          
+          this.mockData[index] = {
+            ...this.mockData[index],
+            ...iceCream,
+            updated_at: new Date().toISOString()
+          };
+          
+          resolve(this.mockData[index]);
+        }, 500);
+      });
+    }
+    
+    // Real API implementation
+    try {
+      const response = await fetch(`${API_URL}/ice-creams/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(iceCream)
+      });
+      if (response.status === 404) {
+        return undefined;
+      }
+      if (!response.ok) {
+        throw new Error('Failed to update ice cream');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Error updating ice cream with id ${id}:`, error);
+      throw error;
+    }
   }
   
   // Delete ice cream
   async deleteIceCream(id: number): Promise<boolean> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const index = this.mockData.findIndex(item => item.id === id);
-        if (index === -1) {
-          resolve(false);
-          return;
-        }
-        
-        this.mockData.splice(index, 1);
-        resolve(true);
-      }, 500);
-    });
+    if (this.useMockData) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const index = this.mockData.findIndex(item => item.id === id);
+          if (index === -1) {
+            resolve(false);
+            return;
+          }
+          
+          this.mockData.splice(index, 1);
+          resolve(true);
+        }, 500);
+      });
+    }
+    
+    // Real API implementation
+    try {
+      const response = await fetch(`${API_URL}/ice-creams/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.status === 404) {
+        return false;
+      }
+      if (!response.ok) {
+        throw new Error('Failed to delete ice cream');
+      }
+      return true;
+    } catch (error) {
+      console.error(`Error deleting ice cream with id ${id}:`, error);
+      throw error;
+    }
+  }
+  
+  // Method to toggle between mock data and real API
+  setUseMockData(value: boolean): void {
+    this.useMockData = value;
+    console.log(`API is now using ${value ? 'mock data' : 'real API'}`);
   }
 }
 

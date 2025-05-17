@@ -7,9 +7,10 @@ import IceCreamModal from '@/components/IceCreamModal';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Database } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeProvider } from 'next-themes';
+import { toggleMockApi, isMockApiEnabled } from '@/utils/apiToggle';
 
 const ShopPage = () => {
   const { toast } = useToast();
@@ -17,9 +18,12 @@ const ShopPage = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isMockApi, setIsMockApi] = useState(true);
   
   useEffect(() => {
     setMounted(true);
+    // Check current API mode
+    setIsMockApi(isMockApiEnabled());
     fetchIceCreams();
   }, []);
   
@@ -58,6 +62,18 @@ const ShopPage = () => {
     }
   };
 
+  const toggleApiMode = () => {
+    const newMode = !isMockApi;
+    toggleMockApi(newMode);
+    setIsMockApi(newMode);
+    toast({
+      title: "API Mode Changed",
+      description: `Now using ${newMode ? 'mock data' : 'real backend API'}.`
+    });
+    // Refresh data after toggling
+    fetchIceCreams();
+  };
+
   if (!mounted) return null;
 
   return (
@@ -76,12 +92,23 @@ const ShopPage = () => {
                   </p>
                 </div>
                 
-                <Button 
-                  onClick={() => setIsModalOpen(true)}
-                  className="gradient-primary-btn mt-4 sm:mt-0"
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add New Ice Cream
-                </Button>
+                <div className="flex flex-wrap items-center gap-3 mt-4 sm:mt-0">
+                  <Button 
+                    onClick={toggleApiMode}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Database size={16} />
+                    {isMockApi ? "Using Mock Data" : "Using Real API"}
+                  </Button>
+                  
+                  <Button 
+                    onClick={() => setIsModalOpen(true)}
+                    className="gradient-primary-btn"
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add New Ice Cream
+                  </Button>
+                </div>
               </div>
               
               {loading ? (
