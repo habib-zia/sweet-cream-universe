@@ -1,6 +1,3 @@
-
-import axios from "axios";
-
 // Define the ice cream type
 export interface IceCream {
   id: number;
